@@ -1,0 +1,243 @@
+/* Basicaly just bfpimentel's theme from https://www.reddit.com/r/unixporn/comments/1q4mlpg/yabai_apple_aint_forcing_me_to_have_rounded/ */
+
+* {
+    font-family: JetBrainsMono Nerd Font, FontAwesome;
+    font-size: 12px;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#bluetooth,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#power-profiles-daemon,
+#mpd,
+#custom-power,
+#window,
+#workspaces button
+ {
+    padding: 0 10px;
+    color: #ffffff;
+    margin: 4px 4px 4px 0;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+window#waybar {
+    background-color: rgba(0, 0, 0, 0.4);
+
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+#window {
+    margin: 4px 4px;
+    padding: 0px 6px;
+}
+
+window#waybar.empty #window {
+    background-color: transparent;
+}
+
+#workspaces {
+    margin-left: 1.5px;
+}
+
+#workspaces button {
+    padding: 0px 5px;
+    margin: 4px 2.5px;
+
+    transition-property: background-color;
+    transition-duration: .5s;
+
+    /* Avoid rounded borders under each button name */
+    border: none;
+    border-radius: 0;
+}
+
+#workspaces button:hover {
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 -3px #ffffff;
+}
+
+#workspaces button.focused, #workspaces button.active {
+    background-color: #ffffff;
+    color: #000000;
+    border: 2px solid #e4e4e4;
+}
+
+#workspaces button.urgent {
+    background-color: #eb4d4b;
+}
+
+#mode {
+    margin-left: 1.5px;
+    margin-right: 0px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #e4e4e4;
+}
+
+#clock {
+    color: #ffffff;
+    margin: 4px 0;
+}
+
+#battery {
+    color: #ffffff;
+    padding-right: 15px;
+}
+
+#battery.charging, #battery.plugged {
+    color: #26A65B;
+    padding-right: 10px;
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}
+
+/* Using steps() instead of linear as a timing function to limit cpu usage */
+#battery.critical:not(.charging) {
+    background-color: #f53c3c;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#power-profiles-daemon {
+    padding-right: 15px;
+}
+
+#power-profiles-daemon.performance {
+    color: #f53c3c;
+}
+
+#power-profiles-daemon.balanced {
+    color: #2980b9;
+}
+
+#power-profiles-daemon.power-saver {
+    color: #2ecc71;
+}
+
+#temperature {
+    color: #ffb867;
+}
+
+#temperature.critical {
+    color: #eb4d4b;
+}
+
+#cpu {
+    color: #2ecc71;
+    padding-right: 14px;
+}
+
+#memory {
+    color: #9b59b6;
+    padding-right: 15px;
+}
+
+#backlight {
+    color: #90b1b1;
+    padding-right: 14px;
+}
+
+#bluetooth {
+    font-size: 16px;
+}
+
+#network, #bluetooth.on {
+    color: #2980b9;
+}
+
+#network.disconnected {
+    color: #f53c3c;
+    padding-right: 15px;
+    font-size: 14px;
+}
+
+#bluetooth.off {
+     color: #f53c3c;   
+}
+
+#pulseaudio {
+    color: #f1c40f;
+    padding-right: 15px;
+}
+
+#pulseaudio.muted {
+    color: #90b1b1;
+}
+
+#custom-media {
+    background-color: #66cc99;
+    color: #2a5c45;
+    min-width: 100px;
+}
+
+#custom-media.custom-spotify {
+    background-color: #66cc99;
+}
+
+#custom-media.custom-vlc {
+    background-color: #ffa000;
+}
+
+#tray {
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: #eb4d4b;
+}
+
+#mpd {
+    /* background-color: #66cc99; */
+    color: #2a5c45;
+}
+
+#mpd.disconnected {
+    /* background-color: #f53c3c; */
+}
+
+#mpd.stopped {
+    /* background-color: #90b1b1; */
+}
+
+#mpd.paused {
+    /* background-color: #51a37a; */
+}
+
+#scratchpad {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#scratchpad.empty {
+	background-color: transparent;
+}
+
+#custom-power {
+    padding-right: 6px;
+}
