@@ -1,0 +1,9 @@
+call plug#begin()
+
+" Theme
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'vim-airline/vim-airline'
+ 
+call plug#end()
+
+let g:lightline = {'colorscheme': 'catppuccin_mocha'}
