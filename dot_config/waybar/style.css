@@ -137,6 +137,10 @@ window#waybar.empty #window {
     color: #2ecc71;
 }
 
+#temperature, #cpu, #memory, #network, #bluetooth { 
+    margin: 0px 0px;
+}
+
 #temperature {
     color: #ffb867;
 }
@@ -153,6 +157,14 @@ window#waybar.empty #window {
 #memory {
     color: #9b59b6;
     padding-right: 15px;
+}
+
+#metrics {
+    margin: 4px 4px;
+}
+
+#metrics:hover { 
+    border: 2px solid white;
 }
 
 #backlight {
@@ -176,6 +188,10 @@ window#waybar.empty #window {
 
 #bluetooth.off {
      color: #f53c3c;   
+}
+
+#right_main {
+    margin: 4px 4px;
 }
 
 #pulseaudio {

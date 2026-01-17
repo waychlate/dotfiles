@@ -3,7 +3,7 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
-(setq doom-font (font-spec :family "JetBrainsMonoNL NFM" :size 14))
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14))
 (setq doom-variable-pitch-font (font-spec :family "Source Sans 3" :size 16))
 
 (after! org
@@ -103,6 +103,8 @@
 (setq undo-strong-limit 120000000)
 (setq undo-outer-limit 360000000)
 (setq undo-auto-amalgamate-limit 5)
+;; Enable "fine-grained" undo in evil-mode
+(setq evil-want-fine-undo t)
 
 (add-hook 'org-mode-hook
           (lambda ()
@@ -153,6 +155,7 @@
 (set-frame-parameter nil 'alpha-background 90) ; For the current frame
 (add-to-list 'default-frame-alist '(alpha-background . 90)) ; For all future frames
 
+(setq treemacs-is-never-other-window nil)
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.

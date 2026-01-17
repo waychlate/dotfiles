@@ -14,7 +14,7 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term foot
+set $term ghostty
 # Your preferred application launcher
 #set $menu rofi -show drun
 set $menu rofi -show combi -modes combi -combi-modes "drun,run"
@@ -238,6 +238,15 @@ bar {
     swaybar_command waybar
    }
 }
+
+#
+# swaylock:
+#
+
+set $lock 'swaylock -f -e -F -k -l -s fill -i /home/doa/Downloads/a_foggy_forest_with_trees.jpg'
+
+# Activate swaylock on lid close
+bindswitch --reload --locked lid:on exec $lock
 
 ### Visual Appearance:
 #

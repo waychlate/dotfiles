@@ -10,6 +10,7 @@
     "margin-left": 5,
     "margin-right": 5,
     "modules-left": [
+        "power-profiles-daemon",
         "sway/workspaces",
         "sway/mode",
         "sway/scratchpad",
@@ -20,15 +21,13 @@
         "clock"
     ],
     "modules-right": [
-        "network",
-        "bluetooth",
-        "power-profiles-daemon",
         "mpd",
         "pulseaudio",
         "group/metrics",
         "backlight",
         "battery",
         "tray",
+        "group/right_main",
         "custom/power"
     ],
     //Modules configuration
@@ -100,8 +99,7 @@
     },
     "clock": {
         "timezone": "America/New_York",
-        "format": "{:%a %I:%M %p}",
-        "format-alt": "{:%m/%d/%Y}",
+        "format": "  {:%I:%M %p    %a %m/%d/%Y}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode": "month",
@@ -185,6 +183,13 @@
     },
     "bluetooth": {
         "format": "󰂯"
+    },
+    "group/right_main": {
+        "orientation": "horizontal",
+        "modules": [
+            "network",
+            "bluetooth"
+        ]
     },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
