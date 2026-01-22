@@ -30,6 +30,10 @@
     }
 }
 
+* {
+    font-family: "Source Sans 3" !important;
+}
+
 /* Suppress Connecting/Waiting/Reading/Transerring */
 /* #statuspanel[type="status"] {
    display: none !important;

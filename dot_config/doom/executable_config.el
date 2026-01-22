@@ -6,6 +6,12 @@
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14))
 (setq doom-variable-pitch-font (font-spec :family "Source Sans 3" :size 16))
 
+(setq org-latex-pdf-process
+      '("latex -interaction nonstopmode -output-directory %o %f"
+        "latex -interaction nonstopmode -output-directory %o %f"))
+
+(setq org-preview-latex-default-process 'dvipng)
+
 (after! org
   ;; use fixed + variable pitch in org
   (use-package! mixed-pitch
@@ -71,9 +77,7 @@
                       '(org-agenda-skip-entry-if 'deadline))
                      (org-deadline-warning-days 0)))
             (todo "NEXT"
-                  ((org-agenda-skip-function
-                    '(org-agenda-skip-entry-if 'deadline))
-                   (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                  ((org-agenda-prefix-format "  %i %-12:c [%e] ")
                    (org-agenda-overriding-header "\nTasks\n")))
             (agenda nil
                     ((org-agenda-entry-types '(:deadline))
@@ -152,10 +156,10 @@
 (setq server-socket-dir (format "/run/user/%d/emacs" (user-real-uid)))
 
 ;; Background transparency
-(set-frame-parameter nil 'alpha-background 90) ; For the current frame
-(add-to-list 'default-frame-alist '(alpha-background . 90)) ; For all future frames
+(set-frame-parameter nil 'alpha-background 95) ; For the current frame
+(add-to-list 'default-frame-alist '(alpha-background . 95)) ; For all future frames
 
-(setq treemacs-is-never-other-window nil)
+(setq scroll-margin 8)
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.

@@ -30,15 +30,34 @@ bindsym $mod+Shift+n exec swaync-client -t -sw
 
 ### Output configuration
 #
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /home/doa/Downloads/snow.jpg fill
-# output * bg #000000 solid_color
-#
+output * bg /home/doa/Downloads/snow_paint.jpg fill
+
 # Example configuration:
 #
 #   output HDMI-A-1 resolution 1920x1080 position 1920,0
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
+
+# laptop display
+output eDP-1 {
+	mode 2880x1800@120.000Hz
+}
+
+# AOC 'gaming' monitor
+output HDMI-A-1 {
+	mode 1920x1080@144hz
+	# Lower values reduce lag but can cause flickering; 
+	# higher values (e.g., 8-10) are more stable on Nvidia.
+	max_render_time 8
+}
+
+# Spare monitor
+output DP-2 {
+	mode 1920x1200@60hz
+	# Lower values reduce lag but can cause flickering; 
+	# higher values (e.g., 8-10) are more stable on Nvidia.
+	max_render_time 8
+}
 
 ### Idle configuration
 #
@@ -53,6 +72,15 @@ output * bg /home/doa/Downloads/snow.jpg fill
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
 
+#
+# swaylock:
+#
+
+set $lock 'swaylock -f -e -F -k -l -s fill -i /home/doa/Downloads/a_foggy_forest_with_trees.jpg'
+
+# Activate swaylock on lid close
+bindswitch --reload --locked lid:on exec $lock
+
 ### Input configuration
 #
 # Example configuration:
@@ -62,6 +90,11 @@ output * bg /home/doa/Downloads/snow.jpg fill
        tap enabled
        scroll_factor 0.5
 	drag_lock disabled
+   }
+   input type:pointer {
+   	accel_profile "flat"
+	pointer_accel 0
+
    }
 #
 #   input type:keyboard {
@@ -238,15 +271,6 @@ bar {
     swaybar_command waybar
    }
 }
-
-#
-# swaylock:
-#
-
-set $lock 'swaylock -f -e -F -k -l -s fill -i /home/doa/Downloads/a_foggy_forest_with_trees.jpg'
-
-# Activate swaylock on lid close
-bindswitch --reload --locked lid:on exec $lock
 
 ### Visual Appearance:
 #

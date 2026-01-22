@@ -15,6 +15,6 @@ These are the dotfiles I use to customize my laptop!
 ** Issue:
 If you hover over sidebery to open it and attempt to drag a tab, the sidebar will close on you.
 ** Fix:
-set =widget.gtk.ignore-bogus-leave-notify= to =1= in about:config
+set ~widget.gtk.ignore-bogus-leave-notify~ to ~1~ in about:config
 + Credit and my biggest thanks to MrOtherGuy in https://bugzilla.mozilla.org/show_bug.cgi?id=1818517
   + /saved my life/
