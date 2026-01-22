@@ -22,7 +22,7 @@
     ],
     "modules-right": [
         "mpd",
-        "pulseaudio",
+        "wireplumber",
         "group/metrics",
         "backlight",
         "battery",
@@ -191,24 +191,17 @@
             "bluetooth"
         ]
     },
-    "pulseaudio": {
-        // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {icon} {format_source}",
+        "wireplumber": {
+        "format": "{volume}% {icon}",
         "format-bluetooth": "{volume}% {icon} {format_source}",
-        "format-bluetooth-muted": " {icon} {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
+        "format-muted": "",
+        "on-click": "qpwgraph",
+        "max-volume": 150,
+        "scroll-step": 0.2,
         "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", "", ""]
-        },
-        "on-click": "pavucontrol"
+            "default": ["", "", ""],
+            "headphone": ""
+        }
     },
     "custom/media": {
         "format": "{icon} {text}",

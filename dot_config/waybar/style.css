@@ -12,7 +12,6 @@
 @define-color overlay1 #7f849c;
 @define-color lavender #b4befe;
 
-/* I love Catppuccin Mocha */
 * {
     font-family: JetBrainsMono Nerd Font, FontAwesome;
     font-size: 12px;
@@ -27,7 +26,6 @@
 #backlight,
 #network,
 #bluetooth,
-#pulseaudio,
 #wireplumber,
 #custom-media,
 #tray,
@@ -200,12 +198,11 @@ window#waybar.empty #window {
     margin: 4px 4px;
 }
 
-#pulseaudio {
+#wireplumber {
     color: @yellow;
-    padding-right: 15px;
 }
 
-#pulseaudio.muted {
+#wireplumber.muted {
     color: @text;
 }
 

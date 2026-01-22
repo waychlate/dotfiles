@@ -273,12 +273,15 @@ bar {
 }
 
 ### Visual Appearance:
-#
+
+set $window-default-color 9399b2
+set $window-focused-color b4befe
+set $default-text-color 313244
 # Window Customization:
 #
 gaps inner 5
 
-client.focused e8dde0 e8dde0 000000 341f25
+client.focused $window-focused-color $window-default-color $default-text-color
 default_border pixel
 default_floating_border pixel
 
