@@ -58,4 +58,7 @@
 (package! org-modern)
 (package! org-fragtog)
 (package! catppuccin-theme)
+(package! olivetti)
+(package! org-appear)
+(package! org-super-agenda)
 

@@ -6,11 +6,25 @@
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14))
 (setq doom-variable-pitch-font (font-spec :family "Source Sans 3" :size 16))
 
-(setq org-latex-pdf-process
-      '("latex -interaction nonstopmode -output-directory %o %f"
-        "latex -interaction nonstopmode -output-directory %o %f"))
-
 (setq org-preview-latex-default-process 'dvipng)
+
+;; Turn off number lines for files that aren't code
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(setq-default display-line-numbers-width 3)
+
+(setq-default cursor-type 'bar)
+
+(use-package! writeroom-mode
+  :defer t)
+
+(use-package! org-super-agenda
+  :after org
+  :config
+  (setq org-super-agenda-header-prefix "\n❯ ")
+  ;; Hide the thin width char glyph
+  (add-hook 'org-agenda-mode-hook
+            #'(lambda () (setq-local nobreak-char-display nil)))
+  (org-super-agenda-mode))
 
 (after! org
   ;; use fixed + variable pitch in org
@@ -38,9 +52,36 @@
     :hook (org-mode . org-modern-mode)
     :config
     (setq org-modern-star 'replace
-          org-modern-list '((43 . "•") (45 . "–") (42 . "→"))))
+          org-modern-list '((43 . "•") (45 . "◆") (42 . "→")))
+    (let ((green (catppuccin-color 'green))
+          (peach (catppuccin-color 'peach))
+          (red   (catppuccin-color 'red))
+          (base  (catppuccin-color 'base)))
+      (setq org-modern-todo-faces
+            `(("TODO" :background ,green :foreground ,base :weight bold)
+              ("NEXT" :background ,peach :foreground ,base :weight bold)
+              ("HOLD" :background ,red   :foreground ,base :weight bold))))
+    )
 
+  ;; Customizing org text
+  ;;(setq org-adapt-indentation t)
   (setq org-hide-emphasis-markers t)
+  (setq org-hide-leading-stars t)
+  (setq org-pretty-entities t)
+  (setq org-ellipsis " ·")
+  (setq org-startup-with-inline-images t)
+
+  ;; Turn off org-mode indents
+  ;; (add-hook 'org-mode-hook (lambda () (org-indent-mode -1)))
+
+  (use-package! org-appear
+    :commands (org-appear-mode)
+    :hook     (org-mode . org-appear-mode)
+    :config
+    (setq org-appear-autoemphasis   t   ; Show bold, italics, verbatim, etc.
+          org-appear-autolinks      t   ; Show links
+	  org-appear-autosubmarkers t)) ; Show sub- and superscripts
+
 
   ;; Org capture templates
   (setq org-capture-templates
@@ -48,9 +89,9 @@
            ,(concat "* TODO %?\n"
                     "/Entered on/ %U"))))
 
-  ;; Use full window for org-capture
-  (add-hook 'org-capture-mode-hook 'delete-other-windows)
-
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  (add-hook 'org-mode-hook 'olivetti-mode)
+  
   ;; Refile
   (setq org-refile-use-outline-path 'file)
   (setq org-outline-path-complete-in-steps nil)
@@ -107,6 +148,7 @@
 (setq undo-strong-limit 120000000)
 (setq undo-outer-limit 360000000)
 (setq undo-auto-amalgamate-limit 5)
+
 ;; Enable "fine-grained" undo in evil-mode
 (setq evil-want-fine-undo t)
 
@@ -159,6 +201,7 @@
 (set-frame-parameter nil 'alpha-background 95) ; For the current frame
 (add-to-list 'default-frame-alist '(alpha-background . 95)) ; For all future frames
 
+;; Buffer doesn't wait until cursor hits the bottom of the screen before it begins to scroll
 (setq scroll-margin 8)
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
