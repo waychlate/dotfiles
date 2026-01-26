@@ -168,7 +168,6 @@ window#waybar.empty #window {
 }
 
 #metrics:hover {
-  border: 2px solid @text;
 }
 
 #backlight {
