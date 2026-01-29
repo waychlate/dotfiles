@@ -32,21 +32,22 @@
 #custom-media,
 #tray,
 #mode,
-#idle_inhibitor,
 #scratchpad,
 #power-profiles-daemon,
-#mpd,
 #custom-power,
+#custom-reboot,
+#custom-lock,
 #window,
-.not-power,
 #workspaces button {
   color: @text;
   padding: 0px 5px;
 }
 
-.modules-left, .modules-center, .modules-right {
+.modules-left,
+.modules-center,
+.modules-right {
   background-color: @base;
-  border-radius: 5px; 
+  border-radius: 5px;
   padding: 0px 4px;
 }
 
@@ -127,6 +128,7 @@ window#waybar.empty #window {
 }
 
 #power-profiles-daemon {
+  margin-right: 5px;
 }
 
 #power-profiles-daemon.performance {
@@ -246,8 +248,3 @@ window#waybar.empty #window {
 #scratchpad.empty {
   background-color: transparent;
 }
-
-#custom-reboot {
-    margin: 0 10px;
-}
-

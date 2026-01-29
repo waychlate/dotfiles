@@ -24,7 +24,7 @@
     "backlight",
     "group/connectivity",
     "battery",
-    "group/group-power"
+    "group/group-power",
   ],
   //Modules configuration
   "sway/workspaces": {
@@ -157,32 +157,28 @@
       "headphone": "",
     },
   },
-"group/group-power": {
+  "group/group-power": {
     "orientation": "horizontal",
     "drawer": {
-        "transition-duration": 500,
-        "children-class": "not-power",
-        "transition-left-to-right": false,
+      "transition-duration": 500,
+      "children-class": "not-power",
+      "transition-left-to-right": false,
     },
-    "modules": [
-        "custom/power", 
-        "custom/lock",
-        "custom/reboot",
-    ]
-},
-"custom/lock": {
+    "modules": ["custom/power", "custom/lock", "custom/reboot"],
+  },
+  "custom/lock": {
     "format": "󰍁",
     "tooltip": false,
-    "on-click": "swaylock"
-},
-"custom/reboot": {
+    "on-click": "swaylock",
+  },
+  "custom/reboot": {
     "format": "󰜉",
     "tooltip": false,
-    "on-click": "reboot"
-},
-"custom/power": {
+    "on-click": "reboot",
+  },
+  "custom/power": {
     "format": "",
     "tooltip": false,
-    "on-click": "poweroff"
-}
+    "on-click": "poweroff",
+  },
 }

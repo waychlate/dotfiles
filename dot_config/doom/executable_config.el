@@ -64,9 +64,11 @@
     )
 
   ;; Customizing org text
-  ;;(setq org-adapt-indentation t)
+  (setq org-adapt-indentation t)
   (setq org-hide-emphasis-markers t)
-  (setq org-hide-leading-stars t)
+
+  ;; try leading if t doesn't work
+  (setq org-modern-hide-stars 'leading)
   (setq org-pretty-entities t)
   (setq org-ellipsis " ·")
   (setq org-startup-with-inline-images t)
@@ -114,9 +116,7 @@
   (setq org-agenda-custom-commands
         '(("g" "Get Things Done (GTD)"
            ((agenda ""
-                    ((org-agenda-skip-function
-                      '(org-agenda-skip-entry-if 'deadline))
-                     (org-deadline-warning-days 0)))
+                    ((org-deadline-warning-days 0)))
             (todo "NEXT"
                   ((org-agenda-prefix-format "  %i %-12:c [%e] ")
                    (org-agenda-overriding-header "\nTasks\n")))
@@ -124,8 +124,8 @@
                     ((org-agenda-entry-types '(:deadline))
                      (org-agenda-format-date "")
                      (org-deadline-warning-days 7)
-                     ;; (org-agenda-skip-function
-                     ;;  '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+                     (org-agenda-skip-function
+                      '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
                      (org-agenda-overriding-header "\nDeadlines (do them now)")))
             (tags-todo "inbox"
                        ((org-agenda-prefix-format "  %?-12t% s")
