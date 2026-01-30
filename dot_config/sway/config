@@ -181,13 +181,26 @@ bindswitch --reload --locked lid:on exec $lock
     # Navigate between workspaces
     bindsym $mod+Mod1+$left workspace prev
     bindsym $mod+Mod1+$right workspace next
-    bindsym $mod+Mod1+left workspace prev
-    bindsym $mod+Mod1+right workspace next
+    bindsym $mod+Tab+$left workspace prev
+    bindsym $mod+Tab+$right workspace next
 
     bindgesture swipe:right workspace prev
     bindgesture swipe:left workspace next
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
+
+	bindsym $mod+Tab mode "nav"
+
+	mode "nav" {
+        bindsym $left workspace prev
+        bindsym $right workspace next
+
+        # Back to normal when you press Enter, Escape, or $mod+Tab again
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+Tab mode "default"
+    }
+
 #
 # Layout stuff:
 #
@@ -263,6 +276,21 @@ bindsym $mod+r mode "resize"
     # Special key to take a screenshot with grim
     bindsym Print exec grim
 
+# screenshots
+# inspiration: https://www.reddit.com/r/swaywm/comments/ghnlea/comment/fqnzxkx/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+set $satty satty -f - --initial-tool=arrow --copy-command=wl-copy --actions-on-escape="save-to-clipboard,exit" --brush-smooth-history-size=5 --disable-notifications
+set $printscreen_mode 'printscreen (r:region, f:full, w:window)'
+mode $printscreen_mode {
+    bindsym r exec swaymsg 'mode "default"' && grim -t ppm -g "$(slurp -d)" - | $satty
+    bindsym f exec swaymsg 'mode "default"' && grim -t ppm - | $satty
+    bindsym w exec swaymsg 'mode "default"' && swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | grim -t ppm -g - - | $satty
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+p mode $printscreen_mode
+
+
 #
 # Status Bar:
 #
@@ -274,14 +302,21 @@ bar {
 
 ### Visual Appearance:
 
+# overlay2
 set $window-default-color 9399b2
-set $window-focused-color b4befe
+# blue
+set $window-focused-color 89b4fa
+# mauve
+set $window-indicator-color cba6f7
+# surface0
 set $default-text-color 313244
+
+
 # Window Customization:
 #
 gaps inner 5
 
-client.focused $window-focused-color $window-default-color $default-text-color
+client.focused $window-default-color $window-focused-color $default-text-color $window-indicator-color
 default_border pixel
 default_floating_border pixel
 

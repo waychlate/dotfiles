@@ -98,9 +98,13 @@
   (setq org-refile-use-outline-path 'file)
   (setq org-outline-path-complete-in-steps nil)
 
+  (setq org-refile-targets
+        `(((,(expand-file-name "agenda/projects.org" org-directory)
+            ,(expand-file-name "agenda/tasks.org" org-directory)) :maxlevel . 4)))
+
   ;; TODO state configuration
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "HOLD(h)" "|" "DONE(d)")))
+        '((sequence "TODO(t)" "NEXT(n)" "HOLD(h)" "[ ](b)" "|" "DONE(d)")))
   (setq org-todo-keyword-faces
         '(("NEXT" . (:foreground "orange" :weight bold))
           ("HOLD" . (:foreground "red" :weight bold))))
@@ -115,11 +119,14 @@
   ;; Agenda
   (setq org-agenda-custom-commands
         '(("g" "Get Things Done (GTD)"
-           ((agenda ""
-                    ((org-deadline-warning-days 0)))
+           (
             (todo "NEXT"
                   ((org-agenda-prefix-format "  %i %-12:c [%e] ")
                    (org-agenda-overriding-header "\nTasks\n")))
+            (agenda ""
+                    ((org-agenda-skip-function
+                      '(org-agenda-skip-entry-if 'todo '("DONE")))
+                     (org-deadline-warning-days 0)))
             (agenda nil
                     ((org-agenda-entry-types '(:deadline))
                      (org-agenda-format-date "")
@@ -245,7 +252,24 @@
 (after! org
   (setq org-agenda-files
         (list (expand-file-name "~/org/agenda") (expand-file-name "~/org/inbox.org")))
-  (setq +org-capture-todo-file "inbox.org"))
+  (setq +org-capture-todo-file "inbox.org")
+
+  ;; Save the corresponding buffers
+  (defun gtd-save-org-buffers ()
+    "Save `org-agenda-files' buffers without user confirmation.
+See also `org-save-all-org-buffers'"
+    (interactive)
+    (message "Saving org-agenda-files buffers...")
+    (save-some-buffers t (lambda () 
+                           (when (member (buffer-file-name) org-agenda-files) 
+                             t)))
+    (message "Saving org-agenda-files buffers... done"))
+
+  ;; Add it after refile
+  (advice-add 'org-refile :after
+              (lambda (&rest _)
+                (gtd-save-org-buffers)))
+  )
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
