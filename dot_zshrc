@@ -122,7 +122,6 @@ function y() {
 
 alias la='ls --color -A'
 alias emacs='emacsclient -nw'
-alias code='vscodium'
 alias dsync='doom sync && systemctl --user restart emacs'
 alias lock='swaylock -f -e -F -k -l -s fill -i /home/doa/Downloads/a_foggy_forest_with_trees.jpg'
 

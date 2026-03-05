@@ -64,15 +64,16 @@
     )
 
   ;; Customizing org text
-  (setq org-adapt-indentation t)
+  (setq org-adapt-indentation nil)
+  (setq org-startup-indented t)
   (setq org-hide-emphasis-markers t)
 
   ;; try leading if t doesn't work
-  (setq org-modern-hide-stars 'leading)
+  (setq org-modern-hide-stars nil)
   (setq org-pretty-entities t)
   (setq org-ellipsis " ·")
   (setq org-startup-with-inline-images t)
-
+  
   ;; Turn off org-mode indents
   ;; (add-hook 'org-mode-hook (lambda () (org-indent-mode -1)))
 
@@ -126,20 +127,22 @@
             (agenda ""
                     ((org-agenda-skip-function
                       '(org-agenda-skip-entry-if 'todo '("DONE")))
-                     (org-deadline-warning-days 0)))
-            (agenda nil
-                    ((org-agenda-entry-types '(:deadline))
-                     (org-agenda-format-date "")
-                     (org-deadline-warning-days 7)
-                     (org-agenda-skip-function
-                      '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
-                     (org-agenda-overriding-header "\nDeadlines (do them now)")))
+                     (org-deadline-warning-days 0))
+                    (org-agenda-overriding-header "\nLook at your week 👁‍🗨")
+                    )
             (tags-todo "inbox"
                        ((org-agenda-prefix-format "  %?-12t% s")
                         (org-agenda-overriding-header "\nInbox\n")))
             (tags "CLOSED>=\"<today>\""
-                  ((org-agenda-overriding-header "\nCompleted Today I suppose...\n")))))))
+                  ((org-agenda-overriding-header "\nCompleted Today I suppose...\n")))))
+          ("2" "Two Weeks Agenda"
+           agenda "" 
+           ((org-agenda-span 14)
+            (org-agenda-start-on-weekday nil)
+            (org-agenda-start-day "0d")))
+          ))
   )
+
 
 (custom-set-faces!
   '(org-document-title :height 1.5)
@@ -210,6 +213,21 @@
 
 ;; Buffer doesn't wait until cursor hits the bottom of the screen before it begins to scroll
 (setq scroll-margin 8)
+
+(setq +doom-dashboard-name "ace")
+
+(defun my-custom-doom-banner ()
+  (let* ((banner '("e m a c s")))
+    (mapc (lambda (line)
+            (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
+                                'face 'doom-dashboard-banner) "\n"))
+          banner)))
+
+(setq +doom-dashboard-functions (delete 'doom-dashboard-widget-banner +doom-dashboard-functions))
+(add-to-list '+doom-dashboard-functions 'my-custom-doom-banner)
+
+(custom-set-faces!
+  '(doom-dashboard-banner :height 1.0))
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
