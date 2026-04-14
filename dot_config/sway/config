@@ -30,7 +30,7 @@ bindsym $mod+Shift+n exec swaync-client -t -sw
 
 ### Output configuration
 #
-output * bg /home/doa/walls/ww_purple.png fill
+output * bg /home/doa/walls/white_city.png fill
 
 # Example configuration:
 #

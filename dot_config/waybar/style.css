@@ -85,7 +85,6 @@ window#waybar.empty #window {
 #workspaces button.active {
   background-color: @text;
   color: @crust;
-  border: 2px solid @overlay1;
 }
 
 #workspaces button.urgent {

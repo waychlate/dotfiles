@@ -13,6 +13,10 @@
   "margin-right": 5,
   "modules-left": [
     "power-profiles-daemon",
+    "hyprland/workspaces",
+    "hyprland/window",
+    "hyprland/submap",
+
     "sway/workspaces",
     "sway/mode",
     "sway/scratchpad",
@@ -28,6 +32,9 @@
     "battery",
     "group/group-power",
   ],
+  "hyprland/workspaces": {
+    "active-only": false,
+  },
   //Modules configuration
   "sway/workspaces": {
     "disable-scroll": true,

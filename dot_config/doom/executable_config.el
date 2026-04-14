@@ -143,6 +143,10 @@
           ))
   )
 
+(after! org-download
+  (setq org-download-screenshot-method "wl-paste -t image/png > %s")
+  ;; This line is the "secret sauce" to stop the error message
+  (setq org-download-screenshot-file "/tmp/screenshot.png"))
 
 (custom-set-faces!
   '(org-document-title :height 1.5)
