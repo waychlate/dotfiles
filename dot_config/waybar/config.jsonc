@@ -14,8 +14,8 @@
   "modules-left": [
     "power-profiles-daemon",
     "hyprland/workspaces",
-    "hyprland/window",
     "hyprland/submap",
+    "hyprland/window",
 
     "sway/workspaces",
     "sway/mode",
