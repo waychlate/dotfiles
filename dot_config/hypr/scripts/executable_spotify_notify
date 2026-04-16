@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Listen for metadata changes on Spotify
+playerctl --player=spotify --follow metadata --format '{{artist}} - {{title}}' | while read -r line; do    
+    # Send the notification to Mako
+    notify-send -a "Spotify" "$line"
+done

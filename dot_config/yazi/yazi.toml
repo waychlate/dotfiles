@@ -1,0 +1,22 @@
+[opener]
+zathura = [
+	{ run = 'zathura "$@"', desc = "zathura", block = false, for = "unix" },
+]
+imv = [
+    { run = 'imv "$@"', desc = "imv", orphan = true, for = "unix" },
+]
+browser = [
+    { run = 'firefox "$@"', desc = "Firefox", orphan = true, for = "unix" },
+]
+mpv = [
+    { run = 'mpv "$@"', desc = "mpv", orphan = true, for = "unix" },
+]
+
+[open]
+rules = [
+	{ mime = "application/pdf", use = [ "zathura", "browser", "reveal" ] },
+	{ mime = "{image/*}", use = [ "imv", "browser", "reveal" ] },
+	{ mime = "text/html", use = [ "browser", "reveal" ] },
+	{ mime = "video/*", use = [ "mpv", "browser", "reveal" ] },
+	{ mime = "audio/*", use = [ "mpv" ] },
+]

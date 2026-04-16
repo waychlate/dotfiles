@@ -1,0 +1,3 @@
+playerctl --player=firefox --follow metadata --format '{{artist}} - {{title}}' | while read -r line; do
+    notify-send -a "YouTube Music" "$line"
+done
