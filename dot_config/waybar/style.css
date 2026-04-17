@@ -32,6 +32,7 @@
 #custom-media,
 #tray,
 #mode,
+#submap,
 #scratchpad,
 #power-profiles-daemon,
 #custom-power,
@@ -91,7 +92,8 @@ window#waybar.empty #window {
   background-color: @red;
 }
 
-#mode {
+#mode,
+#submap {
   background-color: @text;
   color: #000000;
   border: 1px solid @overlay1;

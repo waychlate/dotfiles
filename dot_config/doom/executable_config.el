@@ -126,7 +126,7 @@
                    (org-agenda-overriding-header "\nTasks\n")))
             (agenda ""
                     ((org-agenda-skip-function
-                      '(org-agenda-skip-entry-if 'todo '("DONE")))
+                      '(org-agenda-skip-entry-if 'todo '("DONE" "HOLD")))
                      (org-deadline-warning-days 0))
                     (org-agenda-overriding-header "\nLook at your week 👁‍🗨")
                     )

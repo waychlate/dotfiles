@@ -57,3 +57,8 @@ group-by=category
 width=350
 text-alignment=left
 border-color=#cba6f7
+
+[app-name="YouTube Music"]
+width=350
+text-alignment=left
+border-color=#cba6f7
