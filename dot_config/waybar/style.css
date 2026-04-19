@@ -33,6 +33,7 @@
 #tray,
 #mode,
 #submap,
+#windowcount,
 #scratchpad,
 #power-profiles-daemon,
 #custom-power,
@@ -96,7 +97,11 @@ window#waybar.empty #window {
 #submap {
   background-color: @text;
   color: #000000;
-  border: 1px solid @overlay1;
+}
+
+#windowcount {
+  font-weight: bold;
+  color: #89b4fa;
 }
 
 #clock {

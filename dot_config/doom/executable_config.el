@@ -90,7 +90,11 @@
   (setq org-capture-templates
         `(("i" "Inbox" entry (file "inbox.org")
            ,(concat "* TODO %?\n"
-                    "/Entered on/ %U"))))
+                    "/Entered on/ %U"))
+          ("e" "Event" entry  (file+headline "agenda/calendar.org" "Future")
+           ,(concat "* %? \n"
+                    ""))
+          ))
 
   (add-hook 'org-mode-hook 'visual-line-mode)
   (add-hook 'org-mode-hook 'olivetti-mode)
