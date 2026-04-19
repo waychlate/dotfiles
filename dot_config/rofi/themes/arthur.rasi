@@ -33,7 +33,7 @@
     // Magenta
     magenta:      #cba6f7;
     lightmagenta:     #b4befe;
-    //
+    // Mauve
     // Cyan
     cyan:      #94e2d5;
     tcyan:      #cc94e2d5;
@@ -77,7 +77,7 @@ message {
     color: @black;
 }
 inputbar {
-    color: @lightgreen;
+    color: @magenta;
     padding: 11px;
     background-color: @tlightblack;
     border: 2px 2px 2px 2px;
