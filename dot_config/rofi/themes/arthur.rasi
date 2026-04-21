@@ -12,7 +12,7 @@
     // Black
     black:       #181825;
     lightblack:  #313244;
-    tlightblack:  #313244cc;
+    tlightblack:  #313244f2;
     //
     // Red
     red:         #f38ba8;
@@ -97,7 +97,7 @@ listview {
     border-radius: 0px 0px 15px 15px;
     border-color: @foreground;
     border: 0px 2px 2px 2px;
-    background-color: #1e1e2ecc;
+    background-color: #1e1e2ef2;
     dynamic: false;
     lines: 10;
 }
