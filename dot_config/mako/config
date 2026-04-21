@@ -10,7 +10,7 @@ on-touch=dismiss
 #on-notify=exec mpv /usr/share/sounds/freedesktop/stereo/message.oga
 
 # STYLE OPTIONS
-font=JetBrainsMono Nerd Font 10
+font=VictorMono Nerd Font 10
 width=200
 height=100
 margin=20

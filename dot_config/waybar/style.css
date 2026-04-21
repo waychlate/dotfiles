@@ -1,21 +1,21 @@
 /* Basicaly just bfpimentel's theme from https://www.reddit.com/r/unixporn/comments/1q4mlpg/yabai_apple_aint_forcing_me_to_have_rounded/ */
 
-@define-color base   #1e1e2e;
+@define-color base #1e1e2e;
 @define-color mantle #181825;
-@define-color crust  #11111b;
-@define-color text   #cdd6f4;
-@define-color blue   #89b4fa;
-@define-color red    #f38ba8;
-@define-color green  #a6e3a1;
+@define-color crust #11111b;
+@define-color text #cdd6f4;
+@define-color blue #89b4fa;
+@define-color red #f38ba8;
+@define-color green #a6e3a1;
 @define-color yellow #f9e2af;
-@define-color mauve  #cba6f7;
+@define-color mauve #cba6f7;
 @define-color overlay1 #7f849c;
 @define-color lavender #b4befe;
 
 * {
   font-family:
-    JetBrainsMono Nerd Font,
-    FontAwesome;
+    "JetBrainsMono Nerd Font",
+    "Font Awesome 7 Free";
   font-size: 12px;
 }
 
@@ -48,14 +48,16 @@
 .modules-left,
 .modules-center,
 .modules-right {
-  background-color: @base;
-  border-radius: 5px;
+  /* background-color: @base; */
+  background-color: rgba(17, 17, 27, 0.85);
+  border-radius: 2px;
   padding: 0px 4px;
 }
 
 window#waybar {
   /* background-color: @base; */
-  background-color: rgba(30, 30, 46, 0);
+  /* background-color: rgba(30, 30, 46, 0); */
+  background-color: transparent;
 
   transition-property: background-color;
   transition-duration: 0.5s;
@@ -65,8 +67,7 @@ window#waybar.empty #window {
   background-color: transparent;
 }
 
-#workspaces {
-}
+#workspaces {}
 
 #workspaces button {
   transition-property: background-color;
@@ -104,11 +105,9 @@ window#waybar.empty #window {
   color: #89b4fa;
 }
 
-#clock {
-}
+#clock {}
 
-#battery {
-}
+#battery {}
 
 #battery.charging,
 #battery.plugged {
@@ -153,8 +152,7 @@ window#waybar.empty #window {
 #cpu,
 #memory,
 #network,
-#bluetooth {
-}
+#bluetooth {}
 
 #temperature {
   color: @yellow;
@@ -172,11 +170,9 @@ window#waybar.empty #window {
   color: @mauve;
 }
 
-#metrics {
-}
+#metrics {}
 
-#metrics:hover {
-}
+#metrics:hover {}
 
 #backlight {
   color: @lavender;
@@ -218,14 +214,13 @@ window#waybar.empty #window {
   background-color: @green;
 }
 
-#tray {
-}
+#tray {}
 
-#tray > .passive {
+#tray>.passive {
   -gtk-icon-effect: dim;
 }
 
-#tray > .needs-attention {
+#tray>.needs-attention {
   -gtk-icon-effect: highlight;
   background-color: @red;
 }
@@ -235,17 +230,6 @@ window#waybar.empty #window {
   color: @green;
 }
 
-#mpd.disconnected {
-  /* background-color: #f53c3c; */
-}
-
-#mpd.stopped {
-  /* background-color: #90b1b1; */
-}
-
-#mpd.paused {
-  /* background-color: #51a37a; */
-}
 
 #scratchpad {
   background: @mantle;
