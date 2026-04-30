@@ -1,1 +1,2 @@
 0000000000000000000000000000000000000000 e79572c9e6978787af2bca164a85ab6821caeb7b waychlate <khekdoa@gmail.com> 1771000063 -0500	clone: from github.com:waychlate/kickstart.nvim.git
+e79572c9e6978787af2bca164a85ab6821caeb7b d36d362d59353e25587b9a8456da4d052c0d45ef waychlate <khekdoa@gmail.com> 1777569641 -0400	commit: Add LSPs to mason for CSS and QML

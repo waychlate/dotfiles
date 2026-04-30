@@ -3,10 +3,12 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14))
-(setq doom-variable-pitch-font (font-spec :family "Source Sans 3" :size 16))
+(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 14))
+;; (setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 12))
+(setq doom-variable-pitch-font (font-spec :family "Overpass" :size 12))
 
 (setq org-preview-latex-default-process 'dvipng)
+
 
 ;; Turn off number lines for files that aren't code
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -40,7 +42,7 @@
                         (org-latex-preview '(16)))))
   
   ;; Make LaTeX previews scale relative to buffer font
-  (let ((scale (/ (float (face-attribute 'default :height)) 100.0)))
+  (let ((scale (* (/ (float (face-attribute 'default :height)) 100.0) 1.5)))
     (setq org-format-latex-options
           (plist-put org-format-latex-options :scale scale)))
 
