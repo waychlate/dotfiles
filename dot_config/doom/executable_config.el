@@ -16,6 +16,8 @@
 
 (setq-default cursor-type 'bar)
 
+(setq browse-url-browser-function 'browse-url-firefox)
+
 (use-package! writeroom-mode
   :defer t)
 

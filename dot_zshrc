@@ -1,13 +1,14 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-export PATH="$PATH:$HOME/.config/emacs/bin"
+# export PATH="$PATH:$HOME/.config/emacs/bin"
+export PATH="$HOME/.emacs.d/bin:$PATH"
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
 # Enable wikiman shortcut Ctrl + F in the terminal
-source /usr/share/wikiman/widgets/widget.zsh
+# source /usr/share/wikiman/widgets/widget.zsh
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
@@ -75,8 +76,9 @@ ZSH_THEME="powerline"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git colored-man-pages chezmoi colorize docker docker-compose emacs emoji starship tailscale zsh-bat zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git colored-man-pages chezmoi colorize docker docker-compose emacs emoji starship tailscale)
 
+fpath+=/usr/share/zsh/site-functions
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -124,9 +126,16 @@ alias la='ls --color -A'
 alias emacs='emacsclient -nw'
 alias dsync='doom sync && systemctl --user restart emacs'
 alias lock='swaylock -f -e -F -k -l -s fill -i /home/doa/Downloads/a_foggy_forest_with_trees.jpg'
+alias cat='bat'
 
 export PATH=$PATH:/home/doa/.spicetify
 export PATH=$PATH:~/.spicetify
 export BROWSER=firefox
 export PATH=$PATH:~/builds/flutter/bin
 export PATH="${HOME}/.npm-global/bin:${PATH}"
+
+
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
