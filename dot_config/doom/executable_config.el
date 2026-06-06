@@ -7,8 +7,7 @@
 ;; (setq doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 12))
 (setq doom-variable-pitch-font (font-spec :family "Overpass" :size 12))
 
-(setq org-preview-latex-default-process 'dvipng)
-
+(setq org-preview-latex-default-process 'dvisvgm)
 
 ;; Turn off number lines for files that aren't code
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -31,6 +30,37 @@
   (org-super-agenda-mode))
 
 (after! org
+  (setq org-agenda-files
+        (append (directory-files-recursively "~/org/agenda/" "\\.org$")
+                (list (expand-file-name "~/org/inbox.org"))))
+  
+  (setq org-icalendar-combined-description "My Unified Emacs Agenda"
+        org-icalendar-timezone "America/New-York"
+        org-icalendar-date-time-format ":%Y%m%dT%H%M%S"
+        org-icalendar-combined-agenda-file "~/org/org-agenda.ics")
+
+  (setq org-icalendar-include-todo nil)
+
+  (setq org-icalendar-exclude-todo-categories nil)
+  (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo))
+  (setq org-icalendar-use-scheduled '(event-if-todo event-if-not-todo))
+
+  (setq org-agenda-default-appointment-duration 60)
+
+  (defun my/org-gcal-api-push ()
+    "Compiles the date-locked local .ics file and hands it to Python for instant API streaming."
+    (when (derived-mode-p 'org-mode)
+      ;; 1. Generate the fresh .ics file locally
+      (org-icalendar-combine-agenda-files)
+      ;; 2. Run the python script asynchronously from its local directory context
+      (let ((default-directory "/home/doa/org/gcal/"))
+        (start-process "gcal-api-sync" nil
+                       "python" "gcal_sync.py"))))
+
+  ;; Tie the script to save actions
+  (add-hook 'after-save-hook #'my/org-gcal-api-push)
+
+
   ;; use fixed + variable pitch in org
   (use-package! mixed-pitch
     :hook
@@ -42,7 +72,7 @@
                         (org-fragtog-mode)
                         ;; Preview all LaTeX fragments on buffer load
                         (org-latex-preview '(16)))))
-  
+
   ;; Make LaTeX previews scale relative to buffer font
   (let ((scale (* (/ (float (face-attribute 'default :height)) 100.0) 1.5)))
     (setq org-format-latex-options
@@ -57,10 +87,10 @@
     :config
     (setq org-modern-star 'replace
           org-modern-list '((43 . "•") (45 . "◆") (42 . "→")))
-    (let ((green (catppuccin-color 'green))
-          (peach (catppuccin-color 'peach))
-          (red   (catppuccin-color 'red))
-          (base  (catppuccin-color 'base)))
+    (let ((green (doom-color 'green))
+          (peach (doom-color 'peach))
+          (red   (doom-color 'red))
+          (base  (doom-color 'base)))
       (setq org-modern-todo-faces
             `(("TODO" :background ,green :foreground ,base :weight bold)
               ("NEXT" :background ,peach :foreground ,base :weight bold)
@@ -77,7 +107,7 @@
   (setq org-pretty-entities t)
   (setq org-ellipsis " ·")
   (setq org-startup-with-inline-images t)
-  
+
   ;; Turn off org-mode indents
   ;; (add-hook 'org-mode-hook (lambda () (org-indent-mode -1)))
 
@@ -102,7 +132,7 @@
 
   (add-hook 'org-mode-hook 'visual-line-mode)
   (add-hook 'org-mode-hook 'olivetti-mode)
-  
+
   ;; Refile
   (setq org-refile-use-outline-path 'file)
   (setq org-outline-path-complete-in-steps nil)
@@ -117,7 +147,7 @@
   (setq org-todo-keyword-faces
         '(("NEXT" . (:foreground "orange" :weight bold))
           ("HOLD" . (:foreground "red" :weight bold))))
-  
+
   (defun log-todo-next-creation-date (&rest ignore)
     "Log NEXT creation time in the property drawer under the key 'ACTIVATED'"
     (when (and (string= (org-get-todo-state) "NEXT")
@@ -269,7 +299,11 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'catppuccin)
+;; 
+;; (setq doom-theme 'catppuccin)
+;; (setq doom-theme 'doom-ayu-mirage)
+;; (setq doom-theme 'doom-nord-aurora)
+(setq doom-theme 'doom-flatwhite) ;; This might be the greatest white-theme I've laid my eyes on
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.

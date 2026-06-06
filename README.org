@@ -5,7 +5,7 @@ These are the dotfiles I use to customize my laptop!
 
 * What I'm using right now
 1. sway -> Hyprland! [switched from sway] (window manager)
-2. waybar (status bar)
+2. noctalia
 3. zsh (shell)
 4. rofi (application launcher)
 5. ghostty -> kitty (terminal emulator)

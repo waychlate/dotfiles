@@ -61,4 +61,3 @@
 (package! olivetti)
 (package! org-appear)
 (package! org-super-agenda)
-
