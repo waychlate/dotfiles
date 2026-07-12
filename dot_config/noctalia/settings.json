@@ -255,7 +255,7 @@
         "manualSunrise": "06:30",
         "manualSunset": "18:30",
         "monitorForColors": "",
-        "predefinedScheme": "Eldritch",
+        "predefinedScheme": "Kanagawa",
         "schedulingMode": "off",
         "syncGsettings": true,
         "useWallpaperColors": false
@@ -497,9 +497,9 @@
         "criticalUrgencyDuration": 15,
         "density": "compact",
         "enableBatteryToast": true,
-        "enableKeyboardLayoutToast": true,
+        "enableKeyboardLayoutToast": false,
         "enableMarkdown": false,
-        "enableMediaToast": true,
+        "enableMediaToast": false,
         "enabled": true,
         "location": "bottom_right",
         "lowUrgencyDuration": 3,
@@ -653,7 +653,7 @@
     },
     "wallpaper": {
         "automationEnabled": false,
-        "directory": "/home/doa/Pictures/Wallpapers",
+        "directory": "/home/doa/walls",
         "enableMultiMonitorDirectories": false,
         "enabled": true,
         "favorites": [

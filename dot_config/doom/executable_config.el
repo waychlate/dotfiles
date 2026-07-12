@@ -15,7 +15,9 @@
 
 (setq-default cursor-type 'bar)
 
-(setq browse-url-browser-function 'browse-url-firefox)
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox") ; Replace "firefox" with "chrome" or "safari" if preferred
+
 
 (use-package! writeroom-mode
   :defer t)
@@ -37,7 +39,8 @@
   (setq org-icalendar-combined-description "My Unified Emacs Agenda"
         org-icalendar-timezone "America/New-York"
         org-icalendar-date-time-format ":%Y%m%dT%H%M%S"
-        org-icalendar-combined-agenda-file "~/org/org-agenda.ics")
+        org-icalendar-combined-agenda-file "~/org/org-agenda.ics"
+        org-icalendar-categories '(all-tags category todo-state))
 
   (setq org-icalendar-include-todo nil)
 
@@ -58,7 +61,7 @@
                        "python" "gcal_sync.py"))))
 
   ;; Tie the script to save actions
-  (add-hook 'after-save-hook #'my/org-gcal-api-push)
+  (add-hook 'focus-out-hook #'my/org-gcal-api-push)
 
 
   ;; use fixed + variable pitch in org
