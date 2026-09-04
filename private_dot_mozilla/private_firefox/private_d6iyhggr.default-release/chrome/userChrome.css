@@ -482,17 +482,54 @@ toolbar:not([customizing]) > #nav-bar-customization-target {
     --uc-sidebar-width: 44px;
     --uc-sidebar-hover-width: 260px;
     --uc-autohide-sidebar-delay: 1ms; /* Waiting time before hiding sidebar */
-    position: relative;
+    position: relative !important;
     min-width: var(--uc-sidebar-width) !important;
     width: var(--uc-sidebar-width) !important;
     max-width: var(--uc-sidebar-width) !important;
-    z-index: 100;
-
-    transition: min-width 115ms linear var(--uc-autohide-sidebar-delay) !important;
-    will-change: min-width;
+    z-index: 100 !important;
+    background-color: var(--bg, #1a1b26) !important;
+    overflow: visible !important;
 }
 
-#sidebar-box:hover, #sidebar-box:-moz-drag-over {
+.sidebar-browser-stack {
+    background-color: var(--bg, #1a1b26) !important;
+    overflow: visible !important;
+}
+
+#sidebar,
+#sidebar-header,
+.sidebar-browser-stack {
+    transition: min-width 115ms linear var(--uc-autohide-sidebar-delay),
+                width 115ms linear var(--uc-autohide-sidebar-delay),
+                box-shadow 115ms linear var(--uc-autohide-sidebar-delay) !important;
+    min-width: var(--uc-sidebar-width) !important;
+    width: var(--uc-sidebar-width) !important;
+    will-change: min-width, width;
+    direction: ltr;
+    &:-moz-locale-dir(rtl) {
+        direction: rtl;
+    }
+}
+
+#sidebar-box:hover > #sidebar-header,
+#sidebar-box:hover > #sidebar,
+#sidebar-box:hover > .sidebar-browser-stack,
+#sidebar-box:hover > .sidebar-browser-stack > #sidebar,
+#sidebar-box:-moz-drag-over > #sidebar-header,
+#sidebar-box:-moz-drag-over > #sidebar,
+#sidebar-box:-moz-drag-over > .sidebar-browser-stack,
+#sidebar-box:-moz-drag-over > .sidebar-browser-stack > #sidebar {
     min-width: var(--uc-sidebar-hover-width) !important;
+    width: var(--uc-sidebar-hover-width) !important;
     transition-delay: 0ms !important;
+}
+
+#sidebar-box:not([positionend]):hover > #sidebar,
+#sidebar-box:not([positionend]):hover > .sidebar-browser-stack > #sidebar {
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.5) !important;
+}
+
+#sidebar-box[positionend]:hover > #sidebar,
+#sidebar-box[positionend]:hover > .sidebar-browser-stack > #sidebar {
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.5) !important;
 }
