@@ -1,5 +1,7 @@
-[plugin]
-deps = []
+[[plugin.deps]]
+use = "TD-Sky/sudo"
+rev = "e70796a"
+hash = "74129f78c811cfe7c694d86c3f634c26"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"

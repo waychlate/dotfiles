@@ -1,4 +1,5 @@
 import os
+import re
 import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -7,6 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from icalendar import Calendar
+from dateutil.rrule import rrulestr
 
 def parse_gcal_time(time_dict):
     if not time_dict:
@@ -42,6 +44,75 @@ def is_academic(categories):
         if 'academic' in cat.lower():
             return True
     return False
+
+def is_done(categories):
+    for cat in categories:
+        if cat.strip().upper() == 'DONE':
+            return True
+    return False
+
+NON_CLASS_TAGS = {
+    'academic', 'general', 'project', 'projects', 'personal', 'config',
+    'arch', 'emacs', 'homeserver', 'errands', 'inbox', 'calendar', 'tea',
+    'todo', 'done', 'next', 'hold', 'waiting', 'cancelled', 'someday', 'canceled',
+    'event', 'note', 'habit'
+}
+
+def get_class_prefix(categories):
+    for cat in categories:
+        c = cat.strip()
+        if re.match(r'^[A-Za-z]{2,5}\s?\d{3,5}[A-Za-z]?$', c):
+            return c
+    if is_academic(categories):
+        for cat in categories:
+            c = cat.strip()
+            if c.lower() not in NON_CLASS_TAGS:
+                return c
+    return None
+
+def format_summary(summary, categories):
+    class_prefix = get_class_prefix(categories)
+    if class_prefix:
+        summary = re.sub(r'^(DL|S):\s*', f'{class_prefix}: ', summary)
+    return summary
+
+def instances(component, now, count=2):
+    """(uid, start, end) tuples to sync for one VEVENT.
+
+    Plain-timestamp repeaters (org exports them with TS UIDs) expand to their next
+    `count` occurrences, each with its own UID, so Google never gets an endless RRULE.
+    An occurrence counts until it ends. Repeating SCHEDULED/DEADLINE items stay single.
+    """
+    if component.name != "VEVENT":
+        return []
+    uid = str(component.get('uid'))
+    start = component.get('dtstart').dt
+    end = component.get('dtend').dt if component.get('dtend') else start
+    rule = component.get('rrule')
+    if not rule or not uid.startswith('TS'):
+        return [(uid, start, end)]
+
+    timed = isinstance(start, datetime.datetime)
+    if timed:
+        s, e = start.replace(tzinfo=None), end.replace(tzinfo=None)
+        threshold = now.astimezone(start.tzinfo or LOCAL_TZ).replace(tzinfo=None) - (e - s)
+    else:
+        s = datetime.datetime.combine(start, datetime.time.min)
+        e = datetime.datetime.combine(end, datetime.time.min)
+        threshold = datetime.datetime.combine(now.astimezone(LOCAL_TZ).date(), datetime.time.min)
+    rr = rrulestr(rule.to_ical().decode(), dtstart=s)
+
+    out = []
+    occ = rr.after(threshold, inc=True)
+    while occ and len(out) < count:
+        occ_end = occ + (e - s)
+        if timed:
+            pair = (occ.replace(tzinfo=start.tzinfo), occ_end.replace(tzinfo=start.tzinfo))
+        else:
+            pair = (occ.date(), occ_end.date())
+        out.append((f"{uid}-{occ:%Y%m%d}", *pair))
+        occ = rr.after(occ)
+    return out
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 CALENDAR_ID = "e3d89532ba31ee6d116006a705b33b2270786cb9cf3907a10a9c7da76b6634c9@group.calendar.google.com"
@@ -110,11 +181,8 @@ def sync_calendar():
         gcal_parsed = Calendar.from_ical(f.read())
         
         for component in gcal_parsed.walk():
-            if component.name == "VEVENT":
+            for uid, start, end in instances(component, now_datetime):
                 summary = str(component.get('summary'))
-                uid = str(component.get('uid'))
-                start = component.get('dtstart').dt
-                end = component.get('dtend').dt if component.get('dtend') else start
                 
                 if isinstance(end, datetime.datetime):
                     end_check = end.replace(tzinfo=LOCAL_TZ) if end.tzinfo is None else end.astimezone(LOCAL_TZ)
@@ -126,9 +194,16 @@ def sync_calendar():
                 
                 local_future_uids.add(uid)
                 
-                # Extract categories and determine color (Pistachio = colorId '2' for academic tags/courses)
+                # Extract categories and determine color:
+                # Gray (colorId '8') for DONE tasks, Pistachio (colorId '2') for active academic tags/courses
                 categories = extract_categories(component)
-                local_color = '2' if is_academic(categories) else None
+                if is_done(categories):
+                    local_color = '8'
+                elif is_academic(categories):
+                    local_color = '2'
+                else:
+                    local_color = None
+                summary = format_summary(summary, categories)
                 
                 # Normalize times and create the body
                 if isinstance(start, datetime.datetime):
@@ -153,6 +228,10 @@ def sync_calendar():
                 if local_color:
                     event_body['colorId'] = local_color
 
+                local_location = str(component.get('location') or '').strip()
+                if local_location:
+                    event_body['location'] = local_location
+
                 if uid in gcal_events:
                     gcal_event = gcal_events[uid]
                     gcal_start = parse_gcal_time(gcal_event.get('start'))
@@ -169,6 +248,8 @@ def sync_calendar():
                     elif gcal_end != local_end:
                         has_changes = True
                     elif gcal_color != local_color:
+                        has_changes = True
+                    elif gcal_event.get('location', '') != local_location:
                         has_changes = True
                         
                     if has_changes:

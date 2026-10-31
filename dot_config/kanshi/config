@@ -1,9 +1,43 @@
-profile {
-        output HDMI-A-1 mode 1920x1080@144 scale 1.0
-        output DP-3 mode 1920x1200@59.950 scale 1.0
-        output eDP-2 disable
+output "Samsung Electric Company SyncMaster HVDQ602711" {
+        mode 1920x1200@59.950
+        position 4044,1593
+        scale 1.0
+        alias $HOME_SIDE
 }
 
-profile {
-        output eDP-2 mode 2880x1800@120 scale 2.0
+output "AOC 24G1WG3- PIBM5JA013524" {
+        mode 1920x1080@144 
+        position 2124,1713
+        scale 1.0
+        alias $HOME_MAIN
 }
+
+output "Samsung Display Corp. ATNA40CU05-0 *" {
+        mode 2880x1800@60
+        position 5000,2000
+        scale 2.0
+        alias $INTERNAL
+}
+
+output "Samsung Electric Company LS27D300G H1AK500000" {
+        mode 1920x1080@60
+        position 4734,920
+        scale 1.0
+        alias $VARSITY
+}
+
+profile home_1 {
+        output $INTERNAL disable
+        output $HOME_MAIN enable
+        output $HOME_SIDE enable
+}
+
+profile home_2 {
+        output $INTERNAL enable
+        output $VARSITY enable
+}
+
+profile not_home {
+        output $INTERNAL enable
+}
+

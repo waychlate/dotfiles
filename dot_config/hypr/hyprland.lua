@@ -42,7 +42,9 @@ local menu = "rofi -show run"
 --
 hl.on("hyprland.start", function()
 	hl.exec_cmd("hyprctl setcursor Bibata-Modern-Classic 20")
-	hl.exec_cmd("qs -c noctalia-shell")
+	hl.exec_cmd("hyprpm reload -n")
+	hl.exec_cmd("noctalia")
+	hl.exec_cmd("qs -p ~/projects/personal/shadow-shell")
 	hl.exec_cmd("systemctl --user start hyprpolkitagent")
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
 	hl.exec_cmd("wl-paste --type image --watch cliphist store")
@@ -63,7 +65,7 @@ hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Classic")
 
-hl.env("GDK_SCALE", "2")
+hl.env("GDK_SCALE", "1")
 
 -----------------------
 ----- PERMISSIONS -----
@@ -93,7 +95,7 @@ hl.config({
 		gaps_in = 5,
 		gaps_out = 10,
 
-		border_size = 2,
+		border_size = 0,
 
 		col = {
 			active_border = { colors = { "rgba(f5e0dcee)", "rgba(f38ba8ee)" }, angle = 45 },
@@ -127,12 +129,12 @@ hl.config({
 	},
 
 	decoration = {
-		rounding = 0,
+		rounding = 10,
 		rounding_power = 2,
 
 		-- Change transparency of focused and unfocused windows
 		active_opacity = 1.0,
-		-- inactive_opacity = 1.0,
+		inactive_opacity = 0.90,
 
 		shadow = {
 			enabled = true,
@@ -162,24 +164,24 @@ hl.curve("almostLinear", { type = "bezier", points = { { 0.5, 0.5 }, { 0.75, 1 }
 hl.curve("quick", { type = "bezier", points = { { 0.15, 0 }, { 0.1, 1 } } })
 
 -- Default springs
-hl.curve("easy", { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
+hl.curve("easy", { type = "spring", mass = 1, stiffness = 238.1191, dampening = 24.21279333 })
 
 hl.animation({ leaf = "global", enabled = true, speed = 10, bezier = "default" })
 hl.animation({ leaf = "border", enabled = true, speed = 5.39, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows", enabled = true, speed = 4.79, spring = "easy" })
-hl.animation({ leaf = "windowsIn", enabled = true, speed = 4.1, spring = "easy", style = "popin 87%" })
-hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.49, bezier = "linear", style = "popin 87%" })
-hl.animation({ leaf = "fadeIn", enabled = true, speed = 1.73, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.46, bezier = "almostLinear" })
-hl.animation({ leaf = "fade", enabled = true, speed = 3.03, bezier = "quick" })
-hl.animation({ leaf = "layers", enabled = true, speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "easeOutQuint", style = "fade" })
-hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear", style = "fade" })
-hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.79, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesIn", enabled = true, speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "windows", enabled = true, speed = 6, bezier = "easeOutQuint" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 6, bezier = "easeOutQuint", style = "popin 80%" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 4.5, bezier = "easeOutQuint", style = "popin 87%" })
+hl.animation({ leaf = "fadeIn", enabled = true, speed = 5, bezier = "quick" })
+hl.animation({ leaf = "fadeOut", enabled = true, speed = 5, bezier = "quick" })
+hl.animation({ leaf = "fade", enabled = true, speed = 5, bezier = "quick" })
+hl.animation({ leaf = "layers", enabled = true, speed = 5, bezier = "easeOutQuint" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 5, bezier = "easeOutQuint", style = "fade" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 5, bezier = "easeOutQuint", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 5, bezier = "quick" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 5, bezier = "quick" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 6, bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesIn", enabled = true, speed = 6, bezier = "easeOutQuint", style = "slide" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 6, bezier = "easeOutQuint", style = "slide" })
 hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
@@ -296,22 +298,23 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
-hl.bind(
-	mainMod .. " + M",
-	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
-)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + I", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + PERIOD", hl.dsp.exec_cmd("rofi -modi emoji -show emoji"))
 
-local ipc = "qs -c noctalia-shell ipc call"
-
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(ipc .. " launcher toggle"))
-hl.bind(mainMod .. " + S", hl.dsp.exec_cmd(ipc .. " controlCenter toggle"))
-hl.bind(mainMod .. " + comma", hl.dsp.exec_cmd(ipc .. " settings toggle"))
-hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(ipc .. " sessionMenu toggle"))
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("qs -p ~/projects/personal/shadow-shell ipc call launcher toggle"))
+hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("noctalia msg panel-toggle control-center"))
+hl.bind(mainMod .. " + comma", hl.dsp.exec_cmd("noctalia msg settings-toggle"))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd("noctalia msg panel-toggle session"))
+hl.bind("ALT + TAB", function()
+	if hl.plugin and hl.plugin.hyprexpo and hl.plugin.hyprexpo.expo then
+		hl.plugin.hyprexpo.expo("toggle")
+	else
+		hl.exec_cmd("noctalia msg window-switcher")
+	end
+end)
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
@@ -354,12 +357,11 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Laptop multimedia keys for volume and LCD brightness
 
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. " volume increase"), { locked = true, repeating = true })
-
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. " volume decrease"), { locked = true, repeating = true })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd(ipc .. " volume muteOutput"), { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(ipc .. " brightness increase"), { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. " brightness decrease"), { locked = true, repeating = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("noctalia msg volume-up"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("noctalia msg volume-down"), { locked = true, repeating = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("noctalia msg volume-mute"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("noctalia msg brightness-up"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("noctalia msg brightness-down"), { locked = true, repeating = true })
 
 hl.bind(
 	"XF86AudioMicMute",
@@ -428,6 +430,18 @@ end)
 
 -- Example window rules that are useful
 
+hl.window_rule({
+	name = "spotify-opacity",
+	match = { class = "spotify" },
+	opacity = "0.90 override 0.90 override",
+})
+
+hl.window_rule({
+	name = "claude-desktop-opacity",
+	match = { class = "com.anthropic.Claude" },
+	opacity = "0.99 override 0.99 override",
+})
+
 local suppressMaximizeRule = hl.window_rule({
 	-- Ignore maximize requests from all apps. You'll probably like this.
 	name = "suppress-maximize-events",
@@ -460,6 +474,22 @@ hl.window_rule({
 -- })
 -- overlayLayerRule:set_enabled(false)
 
+-- shadow-shell launcher: frosted blur
+hl.layer_rule({
+	name = "shadow-launcher-blur",
+	match = { namespace = "^shadow-launcher$" },
+	blur = true,
+	ignore_alpha = 0.1,
+})
+
+-- shadow-shell bar: frosted blur (the bar is translucent; this is what blurs what's behind it)
+hl.layer_rule({
+	name = "shadow-bar-blur",
+	match = { namespace = "^shadow-bar$" },
+	blur = true,
+	ignore_alpha = 0.1,
+})
+
 -- Hyprland-run windowrule
 hl.window_rule({
 	name = "move-hyprland-run",
@@ -467,6 +497,13 @@ hl.window_rule({
 
 	move = "20 monitor_h-120",
 	float = true,
+})
+
+hl.window_rule({
+	match = { class = "com.gabm.satty" },
+	float = true,
+	size = "monitor_w*0.6 monitor_h*0.6",
+	center = true,
 })
 
 hl.layer_rule({
@@ -479,7 +516,26 @@ hl.layer_rule({
 
 hl.config({
 	xwayland = {
-		enabled = true,
-		force_zero_scaling = true,
+		force_zero_scaling = false,
 	},
 })
+
+hl.config({
+	plugin = {
+		hyprexpo = {
+			columns = 3,
+			gaps_in = 5,
+			gaps_out = 10,
+			bg_col = "rgb(11111b)",
+			workspace_method = "center current",
+			label_enable = true,
+			label_font_family = "VictorMono Nerd Font",
+			label_font_bold = true,
+			label_font_size = 24,
+		},
+	},
+})
+
+-- BEGIN G14 Helper session integration
+require("g14-helper")
+-- END G14 Helper session integration

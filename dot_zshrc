@@ -127,6 +127,7 @@ alias emacs='emacsclient -nw'
 alias dsync='doom sync && systemctl --user restart emacs'
 alias lock='swaylock -f -e -F -k -l -s fill -i /home/doa/Downloads/a_foggy_forest_with_trees.jpg'
 alias cat='bat'
+alias get_idf='source ~/.espressif/tools/activate_idf_v6.1.sh'
 
 export PATH=$PATH:/home/doa/.spicetify
 export PATH=$PATH:~/.spicetify
@@ -143,3 +144,6 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 
 # Added by Antigravity CLI installer
 export PATH="/home/doa/.local/bin:$PATH"
+
+export QSYS_ROOTDIR="/home/doa/.cache/paru/clone/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/25.1/quartus/sopc_builder/bin"
+xhost +si:localuser:root

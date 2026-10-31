@@ -52,17 +52,21 @@
 
   (defun my/org-gcal-api-push ()
     "Compiles the date-locked local .ics file and hands it to Python for instant API streaming."
-    (when (derived-mode-p 'org-mode)
-      ;; 1. Generate the fresh .ics file locally
-      (org-icalendar-combine-agenda-files)
-      ;; 2. Run the python script asynchronously from its local directory context
-      (let ((default-directory "/home/doa/org/gcal/"))
-        (start-process "gcal-api-sync" nil
-                       "python" "gcal_sync.py"))))
+    ;; 1. Regenerate the .ics only when an agenda file was saved since the last export
+    ;;    (the export blocks Emacs ~2s, and this runs on every focus change)
+    (when (seq-some (lambda (f) (file-newer-than-file-p f org-icalendar-combined-agenda-file))
+                    (org-agenda-files))
+      (org-icalendar-combine-agenda-files))
+    ;; 2. Run the python script asynchronously from its directory
+    (let ((default-directory "/home/doa/org/gcal/"))
+      (start-process "gcal-api-sync" nil
+                     "python" "gcal_sync.py")))
 
   ;; Tie the script to save actions
-  (add-hook 'focus-out-hook #'my/org-gcal-api-push)
-
+  (add-function :after after-focus-change-function
+                (lambda ()
+                  (unless (frame-focus-state)
+                    (my/org-gcal-api-push))))
 
   ;; use fixed + variable pitch in org
   (use-package! mixed-pitch
@@ -77,9 +81,13 @@
                         (org-latex-preview '(16)))))
 
   ;; Make LaTeX previews scale relative to buffer font
-  (let ((scale (* (/ (float (face-attribute 'default :height)) 100.0) 1.5)))
-    (setq org-format-latex-options
-          (plist-put org-format-latex-options :scale scale)))
+  ;; computed when a buffer opens: at daemon startup there's no frame, so :height is 1
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (setq org-format-latex-options
+                    (plist-put org-format-latex-options :scale
+                               (* (/ (float (face-attribute 'default :height)) 100.0) 1.5))))
+            -90)
 
   ;; get rid of superfluous indents 
   (setq adaptive-fill-mode nil)
@@ -91,12 +99,12 @@
     (setq org-modern-star 'replace
           org-modern-list '((43 . "•") (45 . "◆") (42 . "→")))
     (let ((green (doom-color 'green))
-          (peach (doom-color 'peach))
+          (orange (doom-color 'orange))
           (red   (doom-color 'red))
           (base  (doom-color 'base)))
       (setq org-modern-todo-faces
             `(("TODO" :background ,green :foreground ,base :weight bold)
-              ("NEXT" :background ,peach :foreground ,base :weight bold)
+              ("NEXT" :background ,orange :foreground ,base :weight bold)
               ("HOLD" :background ,red   :foreground ,base :weight bold))))
     )
 
@@ -129,8 +137,7 @@
            ,(concat "* TODO %?\n"
                     "/Entered on/ %U"))
           ("e" "Event" entry  (file+headline "agenda/calendar.org" "Future")
-           ,(concat "* %? \n"
-                    ""))
+           "* %?\n%^T")
           ))
 
   (add-hook 'org-mode-hook 'visual-line-mode)
@@ -143,6 +150,20 @@
   (setq org-refile-targets
         `(((,(expand-file-name "agenda/projects.org" org-directory)
             ,(expand-file-name "agenda/tasks.org" org-directory)) :maxlevel . 4)))
+
+  (defun my/org-refile-projects-tasks-only-p ()
+    "In projects.org, only accept headings at or under a \"tasks\" heading."
+    (or (not (equal (buffer-file-name) (expand-file-name "agenda/projects.org" org-directory)))
+        (member "tasks" (org-get-outline-path t))))
+  (setq org-refile-target-verify-function #'my/org-refile-projects-tasks-only-p)
+
+  (defun my/org-refile-to-calendar ()
+    "Refile the entry at point, offering only calendar.org headings."
+    (interactive)
+    (let ((org-refile-targets
+           `((,(expand-file-name "agenda/calendar.org" org-directory) :maxlevel . 4))))
+      (call-interactively #'org-refile)))
+  (map! :map org-mode-map :localleader "s e" #'my/org-refile-to-calendar)
 
   ;; TODO state configuration
   (setq org-todo-keywords
@@ -158,30 +179,82 @@
       (org-entry-put nil "ACTIVATED" (format-time-string "[%Y-%m-%d]"))))
   (add-hook 'org-after-todo-state-change-hook #'log-todo-next-creation-date)
 
-  ;; Agenda
+  ;; Tags (global; inbox.org used to carry its own file-local #+TAGS)
+  (setq org-tag-persistent-alist '(("@home" . ?h) ("@phone" . ?p) ("@errand" . ?e)
+                        ("work" . ?w) ("sideproject" . ?s) ("waiting" . ?W)
+                        ("grind" . ?g) ("fun" . ?f)))
+
+  ;; Agenda: effort column (blank effort shows ~0:30, the assumed default)
+  (defun my/org-agenda-effort ()
+    ;; Time-grid lines are formatted in the agenda buffer; skip them
+    (if (derived-mode-p 'org-mode)
+        (format "%-5s" (or (org-entry-get nil "EFFORT") "~0:30"))
+      "     "))
+  (setq org-agenda-prefix-format
+        '((agenda . "  %i %-12:c %(my/org-agenda-effort) %?-12t% s")
+          (todo   . "  %i %-12:c %(my/org-agenda-effort) ")
+          (tags   . "  %i %-12:c %(my/org-agenda-effort) ")
+          (search . "  %i %-12:c")))
+
+  (defun my/org-today-header ()
+    "Today header; warns when no :fun: item is scheduled and no deadline is within 48h."
+    (let ((fun (org-map-entries #'point "+fun+SCHEDULED<=\"<today>\"/TODO|NEXT" 'agenda))
+          (due (org-map-entries #'point "DEADLINE<=\"<+2d>\"/TODO|NEXT" 'agenda)))
+      (concat "\nToday" (unless (or fun due) "  ⚠ no :fun: item picked") "\n")))
+
+  (defun my/org-schedule-today ()
+    "Schedule the item at point for today."
+    (interactive)
+    (let ((today (format-time-string "%Y-%m-%d")))
+      (if (derived-mode-p 'org-agenda-mode)
+          (org-agenda-schedule nil today)
+        (org-schedule nil today))))
+  (map! :map org-mode-map :localleader "d n" #'my/org-schedule-today)
+  (map! :map org-agenda-mode-map :localleader "d n" #'my/org-schedule-today)
+
+  (defun my/org-energy-view (next-match groups)
+    "Deadlines + Today + rest of NEXT (NEXT-MATCH filtered, GROUPS for super-agenda) + inbox."
+    (let ((skip-done '(org-agenda-skip-entry-if 'todo '("DONE" "HOLD"))))
+      `((agenda ""
+                ((org-agenda-span 1) (org-agenda-start-day "0d")
+                 (org-agenda-entry-types '(:deadline))
+                 (org-deadline-warning-days 7)
+                 (org-agenda-skip-function ',skip-done)
+                 (org-agenda-sorting-strategy '(deadline-up))
+                 (org-agenda-overriding-header "\nDeadlines (next 7 days)\n")))
+        (agenda ""
+                ((org-agenda-span 7) (org-agenda-start-day "0d")
+                 (org-agenda-entry-types '(:timestamp :sexp))
+                 (org-agenda-show-all-dates nil)
+                 (org-agenda-prefix-format "  %i %-12:c %?-12t")
+                 (org-agenda-skip-function ',skip-done)
+                 (org-agenda-overriding-header "\nEvents (next 7 days)\n")))
+        (agenda ""
+                ((org-agenda-span 1) (org-agenda-start-day "0d")
+                 (org-agenda-entry-types '(:scheduled))
+                 (org-scheduled-past-days 365)
+                 (org-agenda-skip-function ',skip-done)
+                 (org-agenda-overriding-header (my/org-today-header))))
+        (tags-todo ,next-match
+                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled))
+                    (org-super-agenda-groups ',groups)
+                    (org-agenda-overriding-header "\nRest of NEXT\n")))
+        (tags-todo "inbox"
+                   ((org-agenda-prefix-format "  %?-12t% s")
+                    (org-agenda-overriding-header "\nInbox\n")))
+        (tags "CLOSED>=\"<today>\""
+              ((org-agenda-overriding-header "\nCompleted Today I suppose...\n"))))))
+
   (setq org-agenda-custom-commands
-        '(("g" "Get Things Done (GTD)"
-           (
-            (todo "NEXT"
-                  ((org-agenda-prefix-format "  %i %-12:c [%e] ")
-                   (org-agenda-overriding-header "\nTasks\n")))
-            (agenda ""
-                    ((org-agenda-skip-function
-                      '(org-agenda-skip-entry-if 'todo '("DONE" "HOLD")))
-                     (org-deadline-warning-days 0))
-                    (org-agenda-overriding-header "\nLook at your week 👁‍🗨")
-                    )
-            (tags-todo "inbox"
-                       ((org-agenda-prefix-format "  %?-12t% s")
-                        (org-agenda-overriding-header "\nInbox\n")))
-            (tags "CLOSED>=\"<today>\""
-                  ((org-agenda-overriding-header "\nCompleted Today I suppose...\n")))))
+        `(("g" "What now? (any energy)" ,(my/org-energy-view "/NEXT" nil))
+          ("l" "What now? (low energy: no grind)" ,(my/org-energy-view "-grind/NEXT" nil))
+          ("h" "What now? (high energy: grind first)"
+           ,(my/org-energy-view "/NEXT" '((:name "Grind" :tag "grind") (:name "Other" :anything t))))
           ("2" "Two Weeks Agenda"
-           agenda "" 
+           agenda ""
            ((org-agenda-span 14)
             (org-agenda-start-on-weekday nil)
-            (org-agenda-start-day "0d")))
-          ))
+            (org-agenda-start-day "0d")))))
   )
 
 (after! org-download
@@ -262,11 +335,15 @@
 (setq +doom-dashboard-name "ace")
 
 (defun my-custom-doom-banner ()
-  (let* ((banner '("e m a c s")))
-    (mapc (lambda (line)
-            (insert (propertize (+doom-dashboard--center +doom-dashboard--width line)
-                                'face 'doom-dashboard-banner) "\n"))
-          banner)))
+  (if (display-graphic-p)
+      (let ((img (create-image (expand-file-name "banner.png" doom-user-dir)
+                               nil nil :max-height 400)))
+        (insert (make-string (max 0 (/ (- +doom-dashboard--width
+                                          (round (car (image-size img)))) 2)) ?\s))
+        (insert-image img)
+        (insert "\n\n"))
+    (insert (propertize (+doom-dashboard--center +doom-dashboard--width "e m a c s")
+                        'face 'doom-dashboard-banner) "\n")))
 
 (setq +doom-dashboard-functions (delete 'doom-dashboard-widget-banner +doom-dashboard-functions))
 (add-to-list '+doom-dashboard-functions 'my-custom-doom-banner)
@@ -371,3 +448,106 @@ See also `org-save-all-org-buffers'"
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+
+;;; --- Journal (org-roam nodes in ~/org/roam/journal/) ---
+(defvar my/journal-dir (expand-file-name "roam/journal/" org-directory))
+
+(defun my/journal--keyword (key)
+  "Value of #+KEY: in the current buffer, or \"\"."
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward (format "^#\\+%s:[ \t]*\\(.*\\)$" key) nil t)
+        (match-string 1)
+      "")))
+
+(defun my/journal--entries ()
+  "Plists (:file :date :series :title :special) for every journal entry."
+  (mapcar
+   (lambda (f)
+     (with-temp-buffer
+       (insert-file-contents f nil 0 4096)
+       (list :file f
+             :date (let ((d (my/journal--keyword "date")))
+                     (if (string-match "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" d)
+                         (match-string 0 d)
+                       ""))
+             :series (my/journal--keyword "series")
+             :title (my/journal--keyword "title")
+             :special (my/journal--keyword "special"))))
+   (when (file-directory-p my/journal-dir)
+     (directory-files my/journal-dir t "\\.org\\'"))))
+
+(defun my/journal-read-series ()
+  "Pick an existing series, or create one after confirmation."
+  (let* ((existing (delete-dups
+                    (seq-remove #'string-empty-p
+                                (mapcar (lambda (e) (plist-get e :series))
+                                        (my/journal--entries)))))
+         (new "➕ new series…")
+         (pick (completing-read "Series: " (append existing (list new)) nil t)))
+    (if (not (equal pick new))
+        pick
+      (let ((s (string-trim (read-string "New series name: "))))
+        (if (and (not (string-empty-p s))
+                 (y-or-n-p (format "Create new series \"%s\"? " s)))
+            s
+          (my/journal-read-series))))))
+
+(defun my/journal--slug (title)
+  (string-trim (downcase (replace-regexp-in-string "[^[:alnum:]]+" "-" title)) "-" "-"))
+
+(defun my/journal-new ()
+  "Create a journal entry: title, Date, series, special."
+  (interactive)
+  (let* ((title (string-trim (read-string "Title: ")))
+         (time (progn (when (string-empty-p title) (user-error "Title required"))
+                      (org-read-date nil t)))
+         (series (my/journal-read-series))
+         (special (read-string "Special (one line): "))
+         (file (expand-file-name
+                (format "%s-%s.org" (format-time-string "%F" time) (my/journal--slug title))
+                my/journal-dir))
+         (now (format-time-string "[%F %a %R]")))
+    (when (file-exists-p file) (user-error "Already exists: %s" file))
+    (make-directory my/journal-dir t)
+    (find-file file)
+    (insert (format ":PROPERTIES:\n:ID:          %s\n:CREATED:     %s\n:LAST_EDITED: %s\n:END:\n#+title: %s\n#+date: %s\n#+series: %s\n#+special: %s\n#+filetags: :journal:\n\n"
+                    (org-id-new) now now title (format-time-string "[%F %a]" time) series special))
+    (save-buffer)))
+
+(defun my/journal-find ()
+  "Browse journal entries, newest first."
+  (interactive)
+  (let* ((entries (sort (my/journal--entries)
+                        (lambda (a b) (string> (plist-get a :date) (plist-get b :date)))))
+         (cands (mapcar (lambda (e)
+                          (cons (format "%s | %s | %s%s"
+                                        (plist-get e :date) (plist-get e :series) (plist-get e :title)
+                                        (if (string-empty-p (plist-get e :special)) ""
+                                          (concat " — " (plist-get e :special))))
+                                e))
+                        entries))
+         (pick (completing-read
+                "Journal: "
+                (lambda (str pred action)
+                  (if (eq action 'metadata)
+                      '(metadata (display-sort-function . identity))
+                    (complete-with-action action cands str pred)))
+                nil t)))
+    (find-file (plist-get (cdr (assoc pick cands)) :file))))
+
+(defun my/journal--touch-last-edited ()
+  "Before-save hook: bump :LAST_EDITED: in journal entries."
+  (when (and buffer-file-name (derived-mode-p 'org-mode)
+             (file-in-directory-p buffer-file-name my/journal-dir))
+    (save-excursion
+      (org-with-wide-buffer
+       (goto-char (point-min))
+       (org-entry-put nil "LAST_EDITED" (format-time-string "[%F %a %R]"))))))
+(add-hook 'before-save-hook #'my/journal--touch-last-edited)
+
+(map! :leader
+      (:prefix ("j" . "journal")
+       :desc "New entry"  "n" #'my/journal-new
+       :desc "Find entry" "f" #'my/journal-find))
+;;; --- end journal ---

@@ -1,0 +1,48 @@
+palette = "lilac_dusk"
+
+# Match Kitty's Lilac Dusk theme, including default module color names.
+[palettes.lilac_dusk]
+base = "#0F1012"
+surface = "#1B1C20"
+text = "#E9EAF0"
+periwinkle = "#A7B8FF"
+orchid = "#D9A9FF"
+pink = "#FF9EC7"
+sky = "#8EE3FF"
+black = "#1B1C20"
+red = "#FF9EC7"
+green = "#A8DDB5"
+yellow = "#E8D6A7"
+blue = "#A7B8FF"
+purple = "#D9A9FF"
+magenta = "#D9A9FF"
+cyan = "#8EE3FF"
+white = "#E9EAF0"
+bright-black = "#686A78"
+bright-red = "#FFB5D5"
+bright-green = "#BFEBCD"
+bright-yellow = "#F3E4BF"
+bright-blue = "#BFCCFF"
+bright-purple = "#E6C3FF"
+bright-magenta = "#E6C3FF"
+bright-cyan = "#B2EDFF"
+bright-white = "#FFFFFF"
+
+[directory]
+style = "bold periwinkle"
+read_only_style = "pink"
+
+[git_branch]
+style = "bold orchid"
+
+[git_status]
+use_git_executable = true
+style = "bold pink"
+
+[character]
+success_symbol = "[❯](bold orchid)"
+error_symbol = "[❯](bold pink)"
+vimcmd_symbol = "[❮](bold periwinkle)"
+
+[cmd_duration]
+style = "bold sky"
