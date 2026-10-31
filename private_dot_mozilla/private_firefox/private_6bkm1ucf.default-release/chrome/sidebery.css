@@ -1,0 +1,347 @@
+/* Sidebery styles · Firefox Zen Rice · Lilac Dusk
+   Paste into Sidebery → Settings → Styles editor → Sidebar (or let Claude inject it). */
+
+#root.root {
+  --ld-text: #e9eaf0;
+  --ld-muted: rgb(233 234 240 / 0.55);
+  --ld-tint: rgb(233 234 240 / 0.06);
+  --ld-periwinkle: #a7b8ff;
+  --ld-orchid: #d9a9ff;
+  --ld-pink: #ff9ec7;
+  --ld-sky: #8ee3ff;
+
+  --frame-bg: transparent !important;
+  --s-frame-bg: transparent !important;
+  --toolbar-bg: transparent !important;
+  --s-toolbar-bg: transparent !important;
+  --frame-fg: var(--ld-text) !important;
+  --toolbar-fg: var(--ld-text) !important;
+  --general-font-family: "Figtree", sans-serif !important;
+
+  --tabs-height: 32px;
+  --tabs-pinned-height: 44px;
+  --tabs-pinned-width: 70px;
+  --tabs-margin: 2px;
+  --tabs-indent: 12px;
+  --tabs-inner-gap: 10px;
+  --tabs-border-radius: 8px;
+  --tabs-font: 13px "Figtree", sans-serif;
+  --tabs-normal-bg: transparent !important;
+  --tabs-normal-fg: rgb(233 234 240 / 0.78) !important;
+  --tabs-activated-bg: rgb(167 184 255 / 0.14) !important;
+  --tabs-activated-fg: var(--ld-periwinkle) !important;
+  --tabs-activated-shadow: none !important;
+
+  --nav-btn-width: 28px;
+  --nav-btn-height: 28px;
+  --nav-btn-border-radius: 7px;
+  --nav-btn-fg: rgb(233 234 240 / 0.55) !important;
+  --nav-btn-accent: var(--ld-orchid) !important;
+}
+
+html,
+body,
+#root.root {
+  background: transparent !important;
+}
+
+/* ---------- layout: panel bar moves to the bottom ---------- */
+
+#root.root {
+  display: flex !important;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#root .main-box {
+  order: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#root .top-horizontal-box {
+  order: 2;
+  height: 44px;
+  padding: 0 8px 8px;
+  box-sizing: border-box;
+}
+
+/* Sidebery's own tool row is replaced by the panel bar */
+#root .BottomBar,
+#root .bottom-bar-space {
+  display: none !important;
+}
+
+/* settings left · panels + add-panel + hidden-panels centered · right corner free for downloads */
+.NavigationBar {
+  position: relative;
+  width: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 !important;
+}
+
+/* flatten the static group so its buttons sit beside the panel icons */
+.NavigationBar .static-btns {
+  display: contents !important;
+}
+
+.NavigationBar .main-items {
+  display: flex;
+  gap: 2px;
+  width: auto !important;
+  flex: 0 0 auto !important;
+}
+
+/* inline mode stacks panel icons with transforms; lay them out normally instead */
+.NavigationBar .main-items .nav-item {
+  position: relative !important;
+  transform: none !important;
+}
+
+.NavigationBar .main-items .nav-item[data-index="-1"] {
+  display: none !important;
+}
+
+.NavigationBar #settings {
+  position: absolute !important;
+  left: 0;
+}
+
+.NavigationBar #hidden_panels_btn,
+.NavigationBar #add_tp {
+  order: 1;
+}
+
+.NavigationBar .nav-item {
+  border-radius: 7px !important;
+}
+
+.NavigationBar .nav-item > svg {
+  fill: rgb(233 234 240 / 0.55) !important;
+}
+
+.NavigationBar .nav-item:hover {
+  background: var(--ld-tint) !important;
+}
+
+.NavigationBar .nav-item[data-active="true"] {
+  background: rgb(217 169 255 / 0.14) !important;
+}
+
+.NavigationBar .nav-item[data-active="true"] > svg {
+  fill: var(--ld-orchid) !important;
+}
+
+.NavigationBar .nav-item .len,
+.NavigationBar .nav-item .badge {
+  display: none !important;
+}
+
+/* hidden-panels popup opens upward (the bar sits at the bottom) on a solid surface */
+.NavigationBar.-top .hidden-panels-popup-layer {
+  top: auto !important;
+  bottom: 100%;
+  z-index: 100;
+}
+
+.NavigationBar.-top .hidden-panels-popup {
+  top: auto !important;
+  bottom: 3px;
+  background-color: #1b1c20 !important;
+  box-shadow: 0 0 0 1px rgb(233 234 240 / 0.09), 0 12px 32px rgb(0 0 0 / 0.5) !important;
+}
+
+.NavigationBar .hidden-panels-enter-from .hidden-panels-popup,
+.NavigationBar .hidden-panels-leave-to .hidden-panels-popup {
+  transform: translateY(4px) !important;
+}
+
+/* ---------- favorites grid (pinned tabs) ---------- */
+
+.PinnedTabsBar {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px !important;
+  padding: 0 8px 10px !important;
+}
+
+.PinnedTabsBar::after {
+  display: none !important;
+}
+
+.PinnedTabsBar .tab-wrapper {
+  width: auto !important;
+  height: 44px !important;
+}
+
+.ScrollBox > .top-shadow,
+.ScrollBox > .bottom-shadow {
+  display: none !important;
+}
+
+.PinnedTabsBar .Tab {
+  width: 100% !important;
+  height: 44px !important;
+}
+
+.PinnedTabsBar .Tab .body {
+  justify-content: center;
+  border-radius: 10px !important;
+  background: var(--ld-tint) !important;
+  box-shadow: inset 0 0 0 1px var(--ld-tint) !important;
+}
+
+.PinnedTabsBar .Tab[data-active="true"] .body {
+  background: rgb(167 184 255 / 0.16) !important;
+  box-shadow: inset 0 0 0 1px rgb(167 184 255 / 0.35) !important;
+}
+
+/* ---------- tabs ---------- */
+
+.TabsPanel .scrollable {
+  padding: 0 8px;
+}
+
+.Tab .body {
+  border-radius: 8px !important;
+}
+
+.Tab:hover .body {
+  background: var(--ld-tint) !important;
+}
+
+.Tab[data-active="true"] .body,
+.Tab[data-active="true"]:hover .body {
+  background: rgb(167 184 255 / 0.14) !important;
+}
+
+.Tab[data-active="true"] .title {
+  font-weight: 500;
+}
+
+.Tab .lvl-wrapper::after,
+.Tab .body::after {
+  display: none !important;
+}
+
+.Tab .close:hover {
+  background: rgb(255 158 199 / 0.18) !important;
+}
+
+.Tab .close:hover .close-icon {
+  fill: var(--ld-pink) !important;
+}
+
+.Tab .audio > svg,
+.Tab .progress-spinner {
+  fill: var(--ld-sky) !important;
+  color: var(--ld-sky) !important;
+}
+
+.Tab[data-discarded="true"] .title {
+  opacity: 0.6;
+}
+
+/* "+ New Tab" row */
+.new-tab-btns {
+  justify-content: flex-start !important;
+  padding-inline: 0 !important;
+}
+
+.new-tab-btns .new-tab-btn {
+  display: flex !important;
+  align-items: center;
+  width: 100% !important;
+  height: 32px !important;
+  justify-content: flex-start !important;
+  gap: 10px;
+  padding-inline: 10px !important;
+  box-sizing: border-box;
+  border-radius: 8px !important;
+  opacity: 0.55;
+}
+
+.new-tab-btns .new-tab-btn:hover {
+  background: var(--ld-tint) !important;
+  opacity: 0.8;
+}
+
+.new-tab-btns .new-tab-btn::after {
+  content: "New Tab";
+  font: 13px "Figtree", sans-serif;
+  color: var(--ld-text);
+}
+
+.new-tab-btns .new-tab-btn > svg {
+  position: static !important;
+  flex: 0 0 16px;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+}
+
+/* new-tab row: no sticky backdrop band */
+.TabsPanel .new-tab-btns {
+  position: relative !important;
+  background: transparent !important;
+}
+
+.TabsPanel .new-tab-btns::before,
+.TabsPanel .new-tab-btns::after {
+  display: none !important;
+}
+
+/* ---------- icon rail: Firefox shrinks the sidebar to 50px when not hovered ---------- */
+
+@media (max-width: 80px) {
+  #root.root {
+    --tabs-indent: 0px;
+  }
+
+  /* panel bar comes back when the sidebar expands */
+  #root .top-horizontal-box {
+    display: none !important;
+  }
+
+  .PinnedTabsBar {
+    grid-template-columns: 1fr;
+    gap: 4px !important;
+    padding: 0 8px 8px !important;
+  }
+
+  .PinnedTabsBar .tab-wrapper,
+  .PinnedTabsBar .Tab {
+    height: 34px !important;
+  }
+
+  .TabsPanel .scrollable,
+  .ScrollBox .scroll-container {
+    scrollbar-width: none;
+  }
+
+  .Tab .t-box,
+  .Tab .close {
+    display: none !important;
+  }
+
+  .Tab .body {
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .Tab .fav {
+    margin: 0 !important;
+  }
+
+  .new-tab-btns .new-tab-btn {
+    justify-content: center !important;
+    padding-inline: 0 !important;
+  }
+
+  .new-tab-btns .new-tab-btn::after {
+    display: none;
+  }
+}
